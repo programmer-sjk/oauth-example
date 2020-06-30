@@ -17,6 +17,9 @@ services:
     volumes:
       - ./client/source:/app
       - /app/node_modules
+    environment:
+      - HOST=0.0.0.0
+      - CHOKIDAR_USEPOLLING=true
     restart: "unless-stopped"
   server_web:
     image: nginx:latest
