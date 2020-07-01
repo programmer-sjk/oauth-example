@@ -24,7 +24,7 @@ export default {
   methods: {
       login: function() {
           console.log(this.id, this.pwd)
-          axios.get('localhost:3000')
+          axios.get('http://localhost:3000')
             .then(r => console.log(r))
       }
   }
