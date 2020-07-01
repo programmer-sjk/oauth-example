@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: 'Login',
   data: function() {
@@ -23,6 +24,8 @@ export default {
   methods: {
       login: function() {
           console.log(this.id, this.pwd)
+          axios.get('localhost:3000')
+            .then(r => console.log(r))
       }
   }
   
