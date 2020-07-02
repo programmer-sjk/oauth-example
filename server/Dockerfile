@@ -8,4 +8,4 @@ RUN npm install
 
 COPY source/ .
 #RUN npm install -g nodemon
-CMD [ "node", "app.js"]
+CMD [ "npm", "start"]
