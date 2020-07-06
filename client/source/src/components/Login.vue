@@ -7,14 +7,20 @@
                 <input class="pwd" type="password" placeholder="패스워드" v-model="pwd"> 
             </div>
             <div class="login_btn" @click="login"> 로그인 </div>
+            <div class="clear"></div>
+            <oauth />
         </div>
     </div>
 </template>
 
 <script>
 import axios from 'axios'
+import oauth from './Oauth.vue'
 export default {
   name: 'Login',
+  components: {
+      oauth
+   },
   data: function() {
       return {
           id: "",
@@ -80,6 +86,10 @@ export default {
     line-height: 62px;
     width: 100px;
     background-color: #3f463f;
+}
+
+.clear {
+    clear: both;
 }
 
 </style>
