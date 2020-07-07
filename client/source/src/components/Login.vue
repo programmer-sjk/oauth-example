@@ -38,7 +38,7 @@ export default {
         login: function() {
             console.log(this.id, this.pwd)
             axios.get('http://localhost:3000')
-            .then(r => console.log(r))
+                .then(r => console.log(r))
         },
         getOauthWay: function(type) {
             switch(type) {
