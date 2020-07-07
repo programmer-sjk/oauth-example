@@ -6,9 +6,9 @@
                 <input class="id" type="text" placeholder="아이디" v-model="id">
                 <input class="pwd" type="password" placeholder="패스워드" v-model="pwd"> 
             </div>
-            <div class="login_btn" @click="login"> 로그인 </div>
+            <div class="login_btn" @click="login"> {{loginWay}} 로그인 </div>
             <div class="clear"></div>
-            <oauth />
+            <oauth @set-auth="getOauthWay"/>
         </div>
     </div>
 </template>
@@ -17,24 +17,38 @@
 import axios from 'axios'
 import oauth from './Oauth.vue'
 export default {
-  name: 'Login',
-  components: {
-      oauth
-   },
-  data: function() {
-      return {
-          id: "",
-          pwd: ""
-      }
-  },
-  methods: {
-      login: function() {
-          console.log(this.id, this.pwd)
-          axios.get('http://localhost:3000')
+    name: 'Login',
+    components: {
+        oauth
+    },
+    data: function() {
+        return {
+            id: "",
+            pwd: "",
+            loginWay: ""
+        }
+    },
+    methods: {
+        login: function() {
+            console.log(this.id, this.pwd)
+            axios.get('http://localhost:3000')
             .then(r => console.log(r))
-      }
-  }
-  
+        },
+        getOauthWay: function(type) {
+            switch(type) {
+                case 1:
+                    this.loginWay = "구글";
+                    break;
+                case 2:
+                    this.loginWay = "네이버";
+                    break;
+                case 3:
+                    this.loginWay = "카카오";
+                    break; 
+            
+            }
+        }
+    }
 }
 </script>
 
@@ -84,7 +98,7 @@ export default {
     float: left;
     height: 62px;
     line-height: 62px;
-    width: 100px;
+    width: 120px;
     background-color: #3f463f;
 }
 
