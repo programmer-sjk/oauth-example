@@ -8,7 +8,12 @@
             </div>
             <div class="login_btn" @click="login"> {{loginWay}} 로그인 </div>
             <div class="clear"></div>
-            <oauth @set-auth="getOauthWay"/>
+
+            <div class="oauth_container">
+                <oauth class="oauth_google pointer" @set-auth="getOauthWay" :type="1" :img="imageNames[0]"/>
+                <oauth class="oauth_naver pointer" @set-auth="getOauthWay" :type="2" :img="imageNames[1]"/>
+                <oauth class="oauth_kakao pointer" @set-auth="getOauthWay" :type="3" :img="imageNames[2]"/>
+            </div>
         </div>
     </div>
 </template>
@@ -25,7 +30,8 @@ export default {
         return {
             id: "",
             pwd: "",
-            loginWay: ""
+            loginWay: "",
+            imageNames: ["google", "naver", "kakao"]
         }
     },
     methods: {
@@ -45,14 +51,12 @@ export default {
                 case 3:
                     this.loginWay = "카카오";
                     break; 
-            
             }
         }
     }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .login_wrap {
     width: 800px;
@@ -104,6 +108,33 @@ export default {
 
 .clear {
     clear: both;
+}
+
+.oauth_container {
+    text-align: center;
+    position: relative;
+}
+
+.oauth_google {
+    position: absolute;
+    top: 50px;
+    left: 40%;
+}
+
+.oauth_naver {
+    position: absolute;
+    top: 150px;
+    left: 40%;
+}
+
+.oauth_kakao {
+    position: absolute;
+    top: 250px;
+    left: 40%;
+}
+
+.pointer {
+    cursor: pointer;
 }
 
 </style>
