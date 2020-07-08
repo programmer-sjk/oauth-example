@@ -7,7 +7,7 @@ import { Account } from './interfaces/account';
 import jwt from 'jsonwebtoken'
 
 const app = express();
-app.use(cors());
+app.use(cors({exposedHeaders: 'Authorization'}));
 app.use(bodyParser.json());
 
 const port: number = 3000
@@ -22,7 +22,7 @@ app.get('/', (request: Request, response: Response) => {
             return response.send('valid')
         } catch(e) {}
     }
-    response.send('not valid');
+    response.send('not valid'); 
 });
 
 app.post('/login', (request: Request, response: Response) => {
@@ -32,7 +32,8 @@ app.post('/login', (request: Request, response: Response) => {
     getAccount((err: Error, data: Account) => {
         if(id === data.id && password === data.password) {
             const token = jwt.sign({ data: 'foobar' }, 'secret', { expiresIn: 60 * 60 });
-            console.log(token)
+
+            response.set('Authorization', 'Bearer ' + token);
             response.send(data);
         }
         else

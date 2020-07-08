@@ -7,6 +7,7 @@
                 <input class="pwd" type="password" placeholder="패스워드" v-model="pwd"> 
             </div>
             <div class="login_btn" @click="login"> {{loginWay}} 로그인 </div>
+            <div class="login_btn" @click="access"> 테스트 </div>
             <div class="clear"></div>
 
             <div class="oauth_container">
@@ -36,9 +37,22 @@ export default {
     },
     methods: {
         login: function() {
-            console.log(this.id, this.pwd)
+            const body = {id: this.id, password: this.pwd}
+
+            axios.post('http://localhost:3000/login', body)
+                .then(r => {
+                    const token = r.headers['authorization'].split(' ')[1];
+                    axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+                })
+                .catch(e => console.log(e))
+        },
+        access: function() {
+            
             axios.get('http://localhost:3000')
-                .then(r => console.log(r))
+                .then(r => {
+                    console.log(r);
+                })
+                .catch(e => console.log(e))
         },
         getOauthWay: function(type) {
             switch(type) {
