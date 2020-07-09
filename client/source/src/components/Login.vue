@@ -32,7 +32,8 @@ export default {
             id: "",
             pwd: "",
             loginWay: "",
-            imageNames: ["google", "naver", "kakao"]
+            imageNames: ["google", "naver", "kakao"],
+            refreshToken: ""
         }
     },
     methods: {
@@ -41,18 +42,40 @@ export default {
 
             axios.post('http://localhost:3000/login', body)
                 .then(r => {
-                    const token = r.headers['authorization'].split(' ')[1];
-                    axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+                    this.setAccessToken(r);
+                    this.refreshToken = r.data.refreshToken;
+                }).catch(e => {
+                    this.id = this.password = '';
                 })
-                .catch(e => console.log(e))
         },
         access: function() {
-            
             axios.get('http://localhost:3000')
                 .then(r => {
                     console.log(r);
+                }).catch(e => {
+                    if(e.response.status === 401 && this.refreshToken) {
+                        const ret = this.getAccessToken()
+                        this.access();
+                    }
                 })
-                .catch(e => console.log(e))
+        },
+        getAccessToken: function() {
+            const data = {
+                refreshToken: this.refreshToken, 
+                id: this.id
+            }
+
+            axios.post('http://localhost:3000/token', data)
+                .then(r => {
+                    this.setAccessToken(r);
+                    return true;
+                }).catch(e => {
+                    return false;
+                })
+        },
+        setAccessToken: function(response) {
+            const token = response.headers['authorization'].split(' ')[1];
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
         },
         getOauthWay: function(type) {
             switch(type) {
@@ -118,6 +141,7 @@ export default {
     line-height: 62px;
     width: 120px;
     background-color: #3f463f;
+    cursor: pointer;
 }
 
 .clear {
