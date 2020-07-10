@@ -43,7 +43,7 @@ export default {
             axios.post('http://localhost:3000/login', body)
                 .then(r => {
                     this.setAccessToken(r);
-                    this.refreshToken = r.data.refreshToken;
+                    this.$cookies.set('refreshToken', r.data.refreshToken)
                 }).catch(e => {
                     this.id = this.password = '';
                 })
@@ -93,6 +93,9 @@ export default {
                     break; 
             }
         }
+    },
+    mounted() {
+        this.refreshToken = this.$cookies.get('refreshToken')
     }
 }
 </script>

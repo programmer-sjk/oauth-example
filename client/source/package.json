@@ -10,7 +10,8 @@
   "dependencies": {
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
-    "vue": "^2.6.11"
+    "vue": "^2.6.11",
+    "vue-cookies": "^1.7.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.4.0",
@@ -34,7 +35,7 @@
       "parser": "babel-eslint"
     },
     "rules": {
-        "no-unused-vars": "off"
+      "no-unused-vars": "off"
     }
   },
   "browserslist": [
