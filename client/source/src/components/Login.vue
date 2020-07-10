@@ -54,24 +54,27 @@ export default {
                     console.log(r);
                 }).catch(e => {
                     if(e.response.status === 401 && this.refreshToken) {
-                        const ret = this.getAccessToken()
-                        this.access();
+                        this.getAccessToken()
+                            .then(_ => this.access())
+                            .catch(e => console.log(e))
                     }
                 })
         },
         getAccessToken: function() {
-            const data = {
-                refreshToken: this.refreshToken, 
-                id: this.id
-            }
+            return new Promise((resolve, reject) => {
+                const data = {
+                    refreshToken: this.refreshToken, 
+                    id: this.id
+                }
 
-            axios.post('http://localhost:3000/token', data)
-                .then(r => {
-                    this.setAccessToken(r);
-                    return true;
-                }).catch(e => {
-                    return false;
-                })
+                axios.post('http://localhost:3000/token', data)
+                    .then(r => {
+                        this.setAccessToken(r);
+                        resolve(true);
+                    }).catch(e => {
+                        reject(false);
+                    })
+            })
         },
         setAccessToken: function(response) {
             const token = response.headers['authorization'].split(' ')[1];
