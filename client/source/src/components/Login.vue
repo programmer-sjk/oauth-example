@@ -7,13 +7,12 @@
                 <input class="pwd" type="password" placeholder="패스워드" v-model="pwd"> 
             </div>
             <div class="login_btn" @click="login"> {{loginWay}} 로그인 </div>
-            <div class="login_btn" @click="access"> 테스트 </div>
             <div class="clear"></div>
 
             <div class="oauth_container">
-                <oauth class="oauth_google pointer" @set-auth="getOauthWay" :type="1" :img="imageNames[0]"/>
-                <oauth class="oauth_naver pointer" @set-auth="getOauthWay" :type="2" :img="imageNames[1]"/>
-                <oauth class="oauth_kakao pointer" @set-auth="getOauthWay" :type="3" :img="imageNames[2]"/>
+                <oauth class="oauth pointer" @set-auth="getOauthWay" :type="1" :way="oauthWays[0]" :bgColor="'#F0F8FF'"/>
+                <oauth class="oauth pointer" @set-auth="getOauthWay" :type="2" :way="oauthWays[1]" :bgColor="'#19ce60'"/>
+                <oauth class="oauth pointer" @set-auth="getOauthWay" :type="3" :way="oauthWays[2]" :bgColor="'rgba(255,238,51,0.99)'"/>
             </div>
         </div>
     </div>
@@ -32,7 +31,7 @@ export default {
             id: "",
             pwd: "",
             loginWay: "",
-            imageNames: ["google", "naver", "kakao"],
+            oauthWays: ["google", "naver", "kakao"],
             refreshToken: ""
         }
     },
@@ -156,25 +155,13 @@ export default {
 
 .oauth_container {
     text-align: center;
-    position: relative;
+    margin-top: 10px;
 }
 
-.oauth_google {
-    position: absolute;
-    top: 50px;
-    left: 40%;
-}
-
-.oauth_naver {
-    position: absolute;
-    top: 150px;
-    left: 40%;
-}
-
-.oauth_kakao {
-    position: absolute;
-    top: 250px;
-    left: 40%;
+.oauth {
+    margin: 10px 0px 10px 100px;
+    width: 440px;
+    line-height: 30px;
 }
 
 .pointer {
