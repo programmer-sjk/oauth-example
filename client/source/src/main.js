@@ -3,6 +3,7 @@ import App from './App.vue'
 import VueCookies from 'vue-cookies'
 
 Vue.config.productionTip = false
+Vue.prototype.$serverUrl = 'http://localhost:3000';
 Vue.use(VueCookies)
 
 new Vue({

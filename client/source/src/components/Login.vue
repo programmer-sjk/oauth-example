@@ -6,13 +6,13 @@
                 <input class="id" type="text" placeholder="아이디" v-model="id">
                 <input class="pwd" type="password" placeholder="패스워드" v-model="pwd"> 
             </div>
-            <div class="login_btn" @click="login"> {{loginWay}} 로그인 </div>
+            <div class="login_btn" @click="login"> 로그인 </div>
             <div class="clear"></div>
 
             <div class="oauth_container">
-                <oauth class="oauth pointer" @set-auth="getOauthWay" :type="1" :way="oauthWays[0]" :bgColor="'#F0F8FF'"/>
-                <oauth class="oauth pointer" @set-auth="getOauthWay" :type="2" :way="oauthWays[1]" :bgColor="'#19ce60'"/>
-                <oauth class="oauth pointer" @set-auth="getOauthWay" :type="3" :way="oauthWays[2]" :bgColor="'rgba(255,238,51,0.99)'"/>
+                <oauth class="oauth pointer" :way="oauthWays[0]" :bgColor="'#F0F8FF'"/>
+                <oauth class="oauth pointer" :way="oauthWays[1]" :bgColor="'#19ce60'"/>
+                <oauth class="oauth pointer" :way="oauthWays[2]" :bgColor="'rgba(255,238,51,0.99)'"/>
             </div>
         </div>
     </div>
@@ -30,16 +30,15 @@ export default {
         return {
             id: "",
             pwd: "",
-            loginWay: "",
             oauthWays: ["google", "naver", "kakao"],
-            refreshToken: ""
+            refreshToken: "",
+            loginUrl: this.$serverUrl + "/login"
         }
     },
     methods: {
         login: function() {
             const body = {id: this.id, password: this.pwd}
-
-            axios.post('http://localhost:3000/login', body)
+            axios.post(this.loginUrl, body)
                 .then(r => {
                     this.setAccessToken(r);
                     this.$cookies.set('refreshToken', r.data.refreshToken)
@@ -48,7 +47,7 @@ export default {
                 })
         },
         access: function() {
-            axios.get('http://localhost:3000')
+            axios.get(this.$serverUrl)
                 .then(r => {
                     console.log(r);
                 }).catch(e => {
@@ -66,7 +65,7 @@ export default {
                     id: this.id
                 }
 
-                axios.post('http://localhost:3000/token', data)
+                axios.post(this.$serverUrl + '/token', data)
                     .then(r => {
                         this.setAccessToken(r);
                         resolve(true);
@@ -79,19 +78,6 @@ export default {
             const token = response.headers['authorization'].split(' ')[1];
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
         },
-        getOauthWay: function(type) {
-            switch(type) {
-                case 1:
-                    this.loginWay = "구글";
-                    break;
-                case 2:
-                    this.loginWay = "네이버";
-                    break;
-                case 3:
-                    this.loginWay = "카카오";
-                    break; 
-            }
-        }
     },
     mounted() {
         this.refreshToken = this.$cookies.get('refreshToken')

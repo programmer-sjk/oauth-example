@@ -1,23 +1,23 @@
 <template>
-    <div @click="setOauth()" :style="{'background-color': bgColor}" class="oauth_wrap"> 
-        {{way}} 
+    <div :style="{'background-color': bgColor}" class="oauth_wrap"> 
+        <a :href="googleLoginUrl"> {{way}} </a> 
     </div>
 </template>
 
 <script>
 export default {
     name: 'Oauth',
-    props: ['type', 'way', 'bgColor'],
+    props: ['way', 'bgColor'],
     data: function() {
         return {
             oauth_way: 0,
         }
     },
-    methods: {
-        setOauth: function() {
-            this.$emit('set-auth', this.type);
+    computed: {
+        googleLoginUrl: function() {
+            return `${this.$serverUrl}/login/${this.way}`
         }
-    },
+    }
 }
 </script>
 
@@ -25,4 +25,9 @@ export default {
     .oauth_wrap {
         border-radius: 2em;
     }
+
+    a {
+        text-decoration: none;
+    }
+ 
 </style>
