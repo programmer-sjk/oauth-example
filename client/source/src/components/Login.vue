@@ -42,8 +42,10 @@ export default {
                 .then(r => {
                     this.setAccessToken(r);
                     this.$cookies.set('refreshToken', r.data.refreshToken)
+                    this.$router.push('home')
                 }).catch(e => {
-                    this.id = this.password = '';
+                    this.id = this.pwd = '';
+                    alert('로그인에 실패했습니다.')
                 })
         },
         access: function() {
