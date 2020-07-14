@@ -31,7 +31,6 @@ export default {
             id: "",
             pwd: "",
             oauthWays: ["google", "naver", "kakao"],
-            refreshToken: "",
             loginUrl: this.$serverUrl + "/login"
         }
     },
@@ -48,41 +47,10 @@ export default {
                     alert('로그인에 실패했습니다.')
                 })
         },
-        access: function() {
-            axios.get(this.$serverUrl)
-                .then(r => {
-                    console.log(r);
-                }).catch(e => {
-                    if(e.response.status === 401 && this.refreshToken) {
-                        this.getAccessToken()
-                            .then(_ => this.access())
-                            .catch(e => console.log(e))
-                    }
-                })
-        },
-        getAccessToken: function() {
-            return new Promise((resolve, reject) => {
-                const data = {
-                    refreshToken: this.refreshToken, 
-                    id: this.id
-                }
-
-                axios.post(this.$serverUrl + '/token', data)
-                    .then(r => {
-                        this.setAccessToken(r);
-                        resolve(true);
-                    }).catch(e => {
-                        reject(false);
-                    })
-            })
-        },
         setAccessToken: function(response) {
             const token = response.headers['authorization'].split(' ')[1];
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
         },
-    },
-    mounted() {
-        this.refreshToken = this.$cookies.get('refreshToken')
     }
 }
 </script>
