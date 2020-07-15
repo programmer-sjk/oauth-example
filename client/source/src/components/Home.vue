@@ -61,6 +61,12 @@ export default {
     },
     mounted() {
         this.refreshToken = this.$cookies.get('refreshToken')
+    },
+    beforeCreate() {
+        if(this.$route.query.token) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.$route.query.token
+            this.$router.replace('/home')
+        }
     }
 }
 </script>

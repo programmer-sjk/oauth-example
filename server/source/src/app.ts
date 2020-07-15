@@ -64,7 +64,9 @@ app.listen(port, () => console.log('Example app listeningg'))
 app.get('/login/google', passport.authenticate('google', { scope: ['profile', 'email', 'openid'] }));
 app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }),
   function(req, res) {
-    res.redirect('http://localhost/home');
+    const tokenContent = { id: 'aa' }
+    const token = jwt.sign(tokenContent, 'secret', { expiresIn: 30 });
+    res.redirect('http://localhost/home?token=' + token);
 });
 
 app.get('/user', (request: Request, response: Response) => {
