@@ -10,9 +10,12 @@ import { getAccount } from './models/account';
 import { Account } from './interfaces/account';
 import { config } from '../config'
 
+var NaverStrategy = require('passport-naver').Strategy;
+
+
 passport.use(new Strategy({
-    clientID: config.client_ID,
-    clientSecret: config.client_secret, 
+    clientID: config.google.client_ID,
+    clientSecret: config.google.client_secret, 
     callbackURL: "http://localhost:3000/auth/google/callback"
   },
   function(accessToken, refreshToken, profile, cb) {
@@ -20,6 +23,17 @@ passport.use(new Strategy({
     return cb(undefined, profile);
   }
 ));
+
+passport.use(new NaverStrategy({
+        clientID: config.naver.client_ID,
+        clientSecret: config.naver.client_secret,
+        callbackURL: "http://localhost:3000/auth/naver/callback"
+    },
+    function(accessToken: string, refreshToken: string, profile: object, cb: any) {
+        console.log(accessToken, refreshToken, profile)
+        return cb(undefined, profile);
+    }
+))
 
 passport.serializeUser((user, done) => {
     done(null, user); 
@@ -29,7 +43,7 @@ passport.deserializeUser((user, done) => {
     done(null, user); 
 });
 
-const allowRoutes = ['/login', '/token', '/login/google', '/auth/google/callback']
+const allowRoutes = ['/login', '/token', '/login/google', '/auth/google/callback', '/login/naver', '/auth/naver/callback']
 const refreshTokens: { [key: string]: string; } = {}
 const app = express();
 app.use(cors({exposedHeaders: 'Authorization'}));
@@ -63,11 +77,25 @@ app.listen(port, () => console.log('Example app listeningg'))
 
 app.get('/login/google', passport.authenticate('google', { scope: ['profile', 'email', 'openid'] }));
 app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }),
-  function(req, res) {
+  function(req, res) {    
     const tokenContent = { id: 'aa' }
     const token = jwt.sign(tokenContent, 'secret', { expiresIn: 30 });
     res.redirect('http://localhost/home?token=' + token);
 });
+
+app.get('/login/naver', passport.authenticate('naver', { failureRedirect: '#!/auth/login' }));
+app.get('/auth/naver/callback', function (req, res, next) {
+    console.log('step1')
+    passport.authenticate('naver', function (err, user) {
+      console.log('passport.authenticate(naver)실행');
+      if (!user) { return res.redirect('http://localhost'); }
+      req.logIn(user, function (err) { 
+        const tokenContent = { id: 'aa' }
+        const token = jwt.sign(tokenContent, 'secret', { expiresIn: 30 });
+        res.redirect('http://localhost/home?token=' + token);     
+      });
+    })(req, res);
+  });
 
 app.get('/user', (request: Request, response: Response) => {
     getAccount((err: Error, data: Account) => {

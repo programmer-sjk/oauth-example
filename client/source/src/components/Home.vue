@@ -35,6 +35,8 @@ export default {
                                 this.getUserInfo()
                             })
                             .catch(e => console.log(e))
+                    } else {
+                        this.id = ""
                     }
                 })
         },
