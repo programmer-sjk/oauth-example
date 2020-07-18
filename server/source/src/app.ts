@@ -76,6 +76,7 @@ app.use((request: Request, response: Response, next: NextFunction) => {
     if(token) {
         try {
             const decoded_data = jwt.verify(token, 'secret');
+            console.log(decoded_data)
             return next();
         } catch(e) {console.log(e)}
     } 
@@ -88,7 +89,8 @@ app.listen(port, () => console.log('Example app listeningg'))
 app.get('/login/google', passport.authenticate('google', { scope: ['profile', 'email', 'openid'] }));
 app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }),
   function(req, res) {    
-    const tokenContent = { id: 'aa' }
+    console.log(req.user)
+    const tokenContent = { name: req.user!.displayName }
     const token = jwt.sign(tokenContent, 'secret', { expiresIn: 30 });
     res.redirect('http://localhost/home?token=' + token);
 });
@@ -98,7 +100,7 @@ app.get('/auth/naver/callback', function (req, res, next) {
     passport.authenticate('naver', function (err, user) {
       if (!user) { return res.redirect('http://localhost'); }
       req.logIn(user, function (err) { 
-        const tokenContent = { id: 'aa' }
+        const tokenContent = { name: req.user!.displayName }
         const token = jwt.sign(tokenContent, 'secret', { expiresIn: 30 });
         res.redirect('http://localhost/home?token=' + token);     
       });
@@ -110,7 +112,7 @@ app.get('/auth/kakao/callback', function (req, res, next) {
   passport.authenticate('kakao', function (err, user) {
     if (!user) { return res.redirect('http://localhost:3000'); }
     req.logIn(user, function (err) { 
-        const tokenContent = { id: 'aa' }
+        const tokenContent = { name: req.user!.displayName }
         const token = jwt.sign(tokenContent, 'secret', { expiresIn: 30 });
         res.redirect('http://localhost/home?token=' + token);            
     });
