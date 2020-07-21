@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon --exec ts-node -T src/app.ts",
+    "start": "nodemon --ignore './sessions/' --exec ts-node -T src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -21,6 +21,7 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-kakao": "^1.0.0",
     "passport-naver": "^1.0.6",
+    "session-file-store": "^1.4.0",
     "ts-node": "^8.10.2"
   },
   "devDependencies": {
@@ -32,6 +33,7 @@
     "@types/node": "^14.0.18",
     "@types/passport": "^1.0.4",
     "@types/passport-google-oauth20": "^2.0.3",
+    "@types/session-file-store": "^1.2.1",
     "typescript": "^3.9.6"
   }
 }
