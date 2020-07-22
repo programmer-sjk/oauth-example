@@ -2,9 +2,8 @@ import express, { Request, Response, NextFunction } from 'express';
 import bodyParser from "body-parser";
 import cors from "cors";
 import session from 'express-session';
-import store from 'session-file-store'
-const FileStore = store(session)
 import passport from 'passport';
+import jwt from 'jsonwebtoken'
 
 import UserController from './controllers/users.controller'
 import LoginController from './controllers/login.controller'
@@ -21,7 +20,7 @@ class App {
         this.app = express();
         this.port = port;
         this.listen()
-        this.allowUrls = ['login', 'auth' ]
+        this.allowUrls = ['login', 'auth', 'token' ]
     
         this.initializeMiddlewares();
         this.initializeLoginCheck();
@@ -31,10 +30,9 @@ class App {
     
     private initializeMiddlewares() {
         this.app.use(bodyParser.json());
-        this.app.use(cors({exposedHeaders: 'Authorization', origin: true, credentials: true}));
+        this.app.use(cors({exposedHeaders: 'Authorization'}));
         this.app.use(session({
             secret: 'secret',
-            store: new FileStore(),
             cookie: { maxAge: 60 * 1000 },
             resave: true,
             saveUninitialized: false
@@ -44,11 +42,19 @@ class App {
     private initializeLoginCheck() {
         this.app.use((req, res, next) => {
             const firstUrlPath = req.path.split('/')[1]
-            if(this.allowUrls.includes(firstUrlPath) || req.session!.isLogin) {
-                next();
-            } else {
-                res.status(401).json({authorized: false}); 
-            }
+            if(this.allowUrls.includes(firstUrlPath)) {
+                return next();
+            } 
+
+            const bearer = req?.headers["authorization"]?.split(" ");
+            const token = bearer?.[1];
+            if(token) {
+                try {
+                    const decoded_data = jwt.verify(token, 'secret');
+                    return next();
+                } catch(e) {console.log(e)}
+            } 
+            res.status(401).json({authorized: false});
         })
     }
 

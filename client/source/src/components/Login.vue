@@ -37,10 +37,10 @@ export default {
     methods: {
         login: function() {
             const body = {id: this.id, password: this.pwd}
-            axios.post(this.loginUrl, body, {withCredentials: true})
+            axios.post(this.loginUrl, body)
                 .then(r => {
-                    //this.setAccessToken(r);
-                    //this.$cookies.set('refreshToken', r.data.refreshToken)
+                    this.setAccessToken(r);
+                    this.$cookies.set('refreshToken', r.data.refreshToken)
                     this.$router.push('home')
                 }).catch(e => {
                     this.id = this.pwd = '';

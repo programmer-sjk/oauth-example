@@ -22,13 +22,12 @@ class LoginController {
         
         getAccount((err: Error, data: Account) => {
             if(id === data.id && password === data.password) {
-                request.session!.isLogin = true
                 const tokenContent = { id: data.id }
                 const token = jwt.sign(tokenContent, 'secret', { expiresIn: 30 });
                 const refreshToken = jwt.sign(tokenContent, 'secret', { expiresIn: 60 * 60 * 24 });
                 this.refreshTokens[refreshToken] = data.id;
                 
-                //response.set('Authorization', 'Bearer ' + token);
+                response.set('Authorization', 'Bearer ' + token);
                 return response.send({refreshToken: refreshToken});
             } 
             
