@@ -21,6 +21,7 @@ class OauthController {
     }
 
     private callback(request: express.Request, response: express.Response) {
+        request.session!.isLogin = true
         const type = request.url.split('/')[2]
         passport.authenticate(type, function (err, user) {
             if (!user) { return response.redirect('http://localhost:3000'); }

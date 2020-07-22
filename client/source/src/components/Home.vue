@@ -24,7 +24,7 @@ export default {
     },
     methods: {
         getUserInfo: function() {
-            axios.get(this.$serverUrl + '/user')
+            axios.get(this.$serverUrl + '/user', {withCredentials: true})
                 .then(r => {
                     this.id = r.data
                 }).catch(e => {

@@ -16,18 +16,19 @@ class LoginController {
         this.router.post('/token', this.token.bind(this))
     }
 
-    private login(this: LoginController, request: express.Request, response: express.Response) {
+    private login(request: express.Request, response: express.Response) {
         const id: string = request.body.id;
         const password: string = request.body.password;
         
         getAccount((err: Error, data: Account) => {
             if(id === data.id && password === data.password) {
+                request.session!.isLogin = true
                 const tokenContent = { id: data.id }
                 const token = jwt.sign(tokenContent, 'secret', { expiresIn: 30 });
                 const refreshToken = jwt.sign(tokenContent, 'secret', { expiresIn: 60 * 60 * 24 });
                 this.refreshTokens[refreshToken] = data.id;
                 
-                response.set('Authorization', 'Bearer ' + token);
+                //response.set('Authorization', 'Bearer ' + token);
                 return response.send({refreshToken: refreshToken});
             } 
             
