@@ -10,10 +10,12 @@ class OauthController {
     }
 
     private intializeRoutes() {
-        this.router.get('/login/google', passport.authenticate('google', { scope: ['profile', 'email', 'openid'] }))
+        this.router.get('/login/google', passport.authenticate('google', { 
+            scope: ['profile', 'email', 'openid'], accessType: 'offline' 
+        }))
         this.router.get('/auth/google/callback', this.callback);
 
-        this.router.get('/login/naver', passport.authenticate('naver', { failureRedirect: '#!/auth/login' }));
+        this.router.get('/login/naver', passport.authenticate('naver'));
         this.router.get('/auth/naver/callback', this.callback);
 
         this.router.get('/login/kakao', passport.authenticate('kakao'));

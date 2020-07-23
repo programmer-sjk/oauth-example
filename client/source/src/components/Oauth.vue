@@ -1,6 +1,6 @@
 <template>
     <div :style="{'background-color': bgColor}" class="oauth_wrap"> 
-        <a :href="googleLoginUrl"> {{way}} </a> 
+        <a :href="redirectLoginUrl"> {{way}} </a> 
     </div>
 </template>
 
@@ -14,7 +14,7 @@ export default {
         }
     },
     computed: {
-        googleLoginUrl: function() {
+        redirectLoginUrl: function() {
             return `${this.$serverUrl}/login/${this.way}`
         }
     }
