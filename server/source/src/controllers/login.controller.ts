@@ -1,12 +1,13 @@
 import express from 'express';
 import jwt from 'jsonwebtoken'
 import User from '../models/user';
+import Token from '../models/token';
 import { IUser } from '../interfaces/user';
 
 
 class LoginController {
     public router = express.Router();
-    public refreshTokens: { [key: string]: string; } = {}
+    //public refreshTokens: { [key: string]: string; } = {}
     constructor() {
         this.intializeRoutes();
     } 
@@ -24,11 +25,13 @@ class LoginController {
         user.getUser((err: Error, data: IUser) => {
             if(id === data.id && password === data.password) {
                 const tokenContent = { id: data.id }
-                const token = jwt.sign(tokenContent, 'secret', { expiresIn: 30 });
+                const accessToken = jwt.sign(tokenContent, 'secret', { expiresIn: 30 });
                 const refreshToken = jwt.sign(tokenContent, 'secret', { expiresIn: 60 * 60 * 24 });
-                this.refreshTokens[refreshToken] = data.id;
+
+                const token = new Token()
+                token.setRefreshToken(data.id, refreshToken)
                 
-                res.set('Authorization', 'Bearer ' + token);
+                res.set('Authorization', 'Bearer ' + accessToken);
                 return res.send({refreshToken: refreshToken});
             } 
             
@@ -40,7 +43,8 @@ class LoginController {
         const id: string = req.body.id;
         const refreshToken: string = req.body.refreshToken;
         
-        if((refreshToken in this.refreshTokens) && (this.refreshTokens[refreshToken] == id)) {
+        const token = new Token()
+        if(token.checkRefreshTokenExist(id, refreshToken)) {
             const token = jwt.sign({ id: id }, 'secret', { expiresIn: 60 });
             res.set('Authorization', 'Bearer ' + token);
             return res.json({authorized: true}); 

@@ -2,6 +2,8 @@ import express from 'express';
 import passport from 'passport';
 import jwt from 'jsonwebtoken'
 
+import Token from '../models/token';
+
 class OauthController {
     public router = express.Router();
 
@@ -25,11 +27,13 @@ class OauthController {
     private callback(req: express.Request, res: express.Response) {
         const type = req.url.split('/')[2]
         passport.authenticate(type, function (err, user) {
-            if (!user) { return res.redirect('http://localhost:3000'); }
+            if (err || !user) { return res.redirect('http://localhost:3000'); }
             req.logIn(user, function (err) { 
                 const tokenContent = { name: req.user!.displayName }
-                const token = jwt.sign(tokenContent, 'secret', { expiresIn: 30 });
-                res.redirect('http://localhost/home?token=' + token);            
+                const accessToken = jwt.sign(tokenContent, 'secret', { expiresIn: 30 });
+                const token = new Token();
+                token.setRefreshToken(req.user!.displayName, accessToken)
+                res.redirect('http://localhost/home?token=' + accessToken);            
             });
         })(req, res);
     }
