@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken'
-import { getAccount } from '../models/account';
-import { Account } from '../interfaces/account';
+import User from '../models/user';
+import { IUser } from '../interfaces/user';
 
 
 class LoginController {
@@ -16,36 +16,37 @@ class LoginController {
         this.router.post('/token', this.token.bind(this))
     }
 
-    private login(request: express.Request, response: express.Response) {
-        const id: string = request.body.id;
-        const password: string = request.body.password;
+    private login(req: express.Request, res: express.Response) {
+        const id: string = req.body.id;
+        const password: string = req.body.password;
         
-        getAccount((err: Error, data: Account) => {
+        const user = new User();
+        user.getUser((err: Error, data: IUser) => {
             if(id === data.id && password === data.password) {
                 const tokenContent = { id: data.id }
                 const token = jwt.sign(tokenContent, 'secret', { expiresIn: 30 });
                 const refreshToken = jwt.sign(tokenContent, 'secret', { expiresIn: 60 * 60 * 24 });
                 this.refreshTokens[refreshToken] = data.id;
                 
-                response.set('Authorization', 'Bearer ' + token);
-                return response.send({refreshToken: refreshToken});
+                res.set('Authorization', 'Bearer ' + token);
+                return res.send({refreshToken: refreshToken});
             } 
             
-            return response.status(401).json({authorized: false}); 
+            return res.status(401).json({authorized: false}); 
         })    
     }
 
-    private token(request: express.Request, response: express.Response) {
-        const id: string = request.body.id;
-        const refreshToken: string = request.body.refreshToken;
+    private token(req: express.Request, res: express.Response) {
+        const id: string = req.body.id;
+        const refreshToken: string = req.body.refreshToken;
         
         if((refreshToken in this.refreshTokens) && (this.refreshTokens[refreshToken] == id)) {
             const token = jwt.sign({ id: id }, 'secret', { expiresIn: 60 });
-            response.set('Authorization', 'Bearer ' + token);
-            return response.json({authorized: true}); 
+            res.set('Authorization', 'Bearer ' + token);
+            return res.json({authorized: true}); 
         } 
             
-        return response.status(401).json({authorized: false}); 
+        return res.status(401).json({authorized: false}); 
     }
 }
 

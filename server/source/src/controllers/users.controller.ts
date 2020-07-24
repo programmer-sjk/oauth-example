@@ -1,6 +1,6 @@
 import express from 'express';
-import { getAccount } from '../models/account';
-import { Account } from '../interfaces/account';
+import User from '../models/user';
+import { IUser } from '../interfaces/user';
 
 class UserController {
     public router = express.Router();
@@ -13,9 +13,10 @@ class UserController {
         this.router.get('/user', this.getUser);
     }
 
-    private getUser(request: express.Request, response: express.Response) {
-        getAccount((err: Error, data: Account) => {
-            response.send(data.id)
+    private getUser(req: express.Request, res: express.Response) {
+        const user = new User();
+        user.getUser((err: Error, data: IUser) => {
+            res.send(data.id)
         })
     }
 }
