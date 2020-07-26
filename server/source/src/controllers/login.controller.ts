@@ -7,7 +7,7 @@ import { IUser } from '../interfaces/user';
 
 class LoginController {
     public router = express.Router();
-    //public refreshTokens: { [key: string]: string; } = {}
+ 
     constructor() {
         this.intializeRoutes();
     } 
@@ -25,10 +25,10 @@ class LoginController {
         user.getUser((err: Error, data: IUser) => {
             if(id === data.id && password === data.password) {
                 const tokenContent = { id: data.id }
-                const accessToken = jwt.sign(tokenContent, 'secret', { expiresIn: 30 });
-                const refreshToken = jwt.sign(tokenContent, 'secret', { expiresIn: 60 * 60 * 24 });
-
                 const token = new Token()
+
+                const accessToken = token.getToken(tokenContent)
+                const refreshToken = token.getRefreshToken(tokenContent)
                 token.setRefreshToken(data.id, refreshToken)
                 
                 res.set('Authorization', 'Bearer ' + accessToken);
@@ -45,11 +45,11 @@ class LoginController {
         
         const token = new Token()
         if(token.checkRefreshTokenExist(id, refreshToken)) {
-            const token = jwt.sign({ id: id }, 'secret', { expiresIn: 60 });
-            res.set('Authorization', 'Bearer ' + token);
+            const accessToken = token.getToken({id: id})
+            res.set('Authorization', 'Bearer ' + accessToken);
             return res.json({authorized: true}); 
         } 
-            
+
         return res.status(401).json({authorized: false}); 
     }
 }

@@ -1,6 +1,8 @@
 import express from 'express';
 import User from '../models/user';
 import { IUser } from '../interfaces/user';
+//
+import Token from '../models/token';
 
 class UserController {
     public router = express.Router();

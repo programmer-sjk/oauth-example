@@ -19,6 +19,7 @@ export default {
     data: function() {
         return {
             id: "",
+            token: "",
             refreshToken: ""
         }
     },
@@ -42,27 +43,34 @@ export default {
         },
         getAccessToken: function() {
             return new Promise((resolve, reject) => {
+                const id = this.id
                 const data = {
                     refreshToken: this.refreshToken, 
-                    id: this.id
+                    id: id
                 }
 
                 axios.post(this.$serverUrl + '/token', data)
                     .then(r => {
-                        this.setAccessToken(r);
+                        const token = r.headers['authorization'].split(' ')[1];
+                        this.setAccessToken(token);
                         resolve(true);
                     }).catch(e => {
                         reject(false);
                     })
             })
         },
-        setAccessToken: function(response) {
-            const token = response.headers['authorization'].split(' ')[1];
-            axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+        setAccessToken: function(token) {
+            if(token) {
+                axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+            }
         },
     },
     mounted() {
         this.refreshToken = this.$cookies.get('refreshToken')
+        this.token = this.$cookies.get('token')
+        if(this.token) {
+            this.setAccessToken(this.token)
+        }    
     },
     beforeCreate() {
         if(this.$route.query.token) {

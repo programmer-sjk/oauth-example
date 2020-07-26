@@ -33,6 +33,9 @@ class OauthController {
                 const accessToken = jwt.sign(tokenContent, 'secret', { expiresIn: 30 });
                 const token = new Token();
                 token.setRefreshToken(req.user!.displayName, accessToken)
+
+                res.cookie('token', accessToken);
+                res.cookie('refreshToken', accessToken);
                 res.redirect('http://localhost/home?token=' + accessToken);            
             });
         })(req, res);
